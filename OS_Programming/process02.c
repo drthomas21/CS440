@@ -10,18 +10,20 @@ int main() {
         printf("error in fork!");  
     else if (fpid == 0)  
         printf("1: I am the child process, my process id is %d\n", getpid());  
-    else  
+    else { 
         printf("1: I am the parent process, my process id is %d\n", getpid());  
+	wait(NULL);
+    }
 
     fpid = fork();  
     if (fpid < 0)  
         printf("error in fork!");  
     else if (fpid == 0)  
         printf("2: I am the child process, my process id is %d\n", getpid());  
-    else  
+    else  {
         printf("2: I am the parent process, my process id is %d\n", getpid());   
-
-    if (fpid > 0)
 	wait(NULL);
+    }
+
     return 0;  
 }  

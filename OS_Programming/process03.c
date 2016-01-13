@@ -13,6 +13,7 @@ int main ()
     
     else 
         printf("parent process, my process id is %d\n",getpid());   
+	wait(NULL);
     }
     return 0;  
 }  
