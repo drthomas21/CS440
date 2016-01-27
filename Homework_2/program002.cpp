@@ -14,8 +14,6 @@ int main() {
 	int clients = 0;
 	account = static_cast<double*>(mmap(NULL, sizeof *account, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0));
 	*account = 0;
-	//std::mutex mtx;					// mutex for critical section
-	//std::condition_variable cv;		// condition variable for critical section 
 	
 	while (clients == 0) {
 		std::cout << "How many clients? " << std::endl;
