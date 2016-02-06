@@ -17,6 +17,16 @@ class Account {
 public:
 	Account(): savings(0), checking(0) { };
 	Account(double savings, double checking) :savings(savings), checking(checking) { }
+	Account operator = (Account source) {
+		this->savings += source.savings;
+		this->checking += source.checking;
+		return *this;
+	}
+	Account operator = (Account *source) {
+		this->savings += source->savings;
+		this->checking += source->checking;
+		return *this;
+	}
 	bool transferFunds(double amount) {
 		if (checking >= amount) {
 			checking -= amount;
@@ -49,20 +59,20 @@ int main() {
 	}
 
 	Account account;
-	Account *pAccounts = &account;
-	
+	Account *pAccounts = &account;	
 
 	pAccounts = static_cast<Account*>(mmap(NULL, (sizeof *pAccounts) * clients, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0));
 	Account *_pAccounts = pAccounts;
 	for (int i = 0; i < clients; i++) {
-		pAccount = _pAccounts + sizeOf(account) * i;
-		*pAccounts = new Account(rand() % 100, rand() % 100 + 10);
+		pAccounts = _pAccounts + sizeof(account) * i;
+		*pAccounts = Account(rand() % 100, rand() % 100 + 10);
 		std::cout << "Client " << (i + 1) << ": ";
-		accounts[i]->showAccounts();
+		(*pAccounts).showAccounts();
 	}
 
 	std::cout << "[Press 'ENTER' to continue]" << std::endl << std::endl;
-	std::cin.ignore();
+	std::cin.ignore(std::numeric_limits<int>::max(), '\n');
+	std::cin.ignore(std::numeric_limits<int>::max(), '\n');
 
 	pid_t *pid = new pid_t[clients];
 	for (int i = 0; i < clients; i++) {
@@ -72,8 +82,8 @@ int main() {
 			std::cout << "Epic Error In Forking" << std::endl;
 			return 1;
 		} else if (pid[i] == 0) {
-			pAccount = _pAccounts + sizeOf(account) * i;
-			(*pAccounts)->transferFunds(AMOUNT);
+			pAccounts = _pAccounts + sizeof(account) * i;
+			(*pAccounts).transferFunds(AMOUNT);
 			return 0;
 		}
 	}
@@ -84,14 +94,12 @@ int main() {
 	}
 	
 	for (int i = 0; i < clients; i++) {
-		pAccount = _pAccounts + sizeOf(account) * i;
-		*pAccounts = new Account(rand() % 100, rand() % 100 + 10);
+		pAccounts = _pAccounts + sizeof(account) * i;
 		std::cout << "Client " << (i + 1) << ": ";
-		accounts[i]->showAccounts();
+		(*pAccounts).showAccounts();
 	}
 
-	munmap(pAccounts, sizeof *account);
+	munmap(pAccounts, (sizeof *pAccounts) * clients);
 	delete pid;
-	delete _pAccounts;
 	return 0;
 }
