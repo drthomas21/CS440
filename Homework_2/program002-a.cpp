@@ -67,7 +67,7 @@ int main() {
 		pAccounts = _pAccounts + sizeof(account) * i;
 		*pAccounts = Account(rand() % 100, rand() % 100 + 10);
 		std::cout << "Client " << (i + 1) << ": ";
-		(*pAccounts).showAccounts();
+		_pAccounts->showAccounts();
 	}
 
 	std::cout << "[Press 'ENTER' to continue]" << std::endl << std::endl;
@@ -83,7 +83,9 @@ int main() {
 			return 1;
 		} else if (pid[i] == 0) {
 			pAccounts = _pAccounts + sizeof(account) * i;
-			(*pAccounts).transferFunds(AMOUNT,_pAccounts);
+			_pAccounts->transferFunds(AMOUNT,_pAccounts);
+			std::cout << "Client " << (i+1) << ": ";
+			_pAccounts->showAccounts();
 			return 0;
 		}
 	}
@@ -92,12 +94,11 @@ int main() {
 		int status;
 		while (waitpid(pid[i], &status, 0) == -1);
 	}
-	
-	for (int i = 0; i < clients; i++) {
-		pAccounts = _pAccounts + sizeof(account) * i;
-		std::cout << "Client " << (i + 1) << ": ";
-		(*pAccounts).showAccounts();
-	}
+
+	std::cout << "[Press 'ENTER' to continue]" << std::endl << std::endl;                                                                                                  
+        std::cin.ignore(std::numeric_limits<int>::max(), '\n');                                                                                                                
+        std::cin.ignore(std::numeric_limits<int>::max(), '\n'); 
+	_pAccounts->showAccounts();
 
 	munmap(pAccounts, (sizeof *pAccounts) * clients);
 	delete pid;
